@@ -1,0 +1,149 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: messagingservice-deployment
+spec:
+  selector:
+    matchLabels:
+      app: messagingservice
+  template:
+    metadata:
+      labels:
+        app: messagingservice
+    spec:
+      containers:
+      - name: messaging-service
+        image: messaging-service:latest
+        imagePullPolicy: Never
+        env:
+        - name: DATABASE_HOST
+          value: mysql_service
+        - name: DATABASE_PORT
+          value: "3306"
+        - name: MYSQL_ROOT_PASSWORD
+          value: root # Use Kubernetes secrets in production
+        - name: MYSQL_DATABASE
+          value: real-timechatapplicationdatabase
+        - name: MYSQL_USER
+          value: user
+        - name: MYSQL_PASSWORD
+          value: pass
+        ports:
+        - containerPort: 8080
+
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: usermanagement-deployment
+spec:
+  selector:
+    matchLabels:
+      app: usermanagement
+  template:
+    metadata:
+      labels:
+        app: usermanagement
+    spec:
+      containers:
+      - name: user-management-service
+        image: user-management-service:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: messagingservice-service
+spec:
+  selector:
+    app: messagingservice
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+  type: LoadBalancer
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: usermanagement-service
+spec:
+  selector:
+    app: usermanagement
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+  type: LoadBalancer
+
+
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysql-pv-claim
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-service
+spec:
+  ports:
+    - port: 3306
+  selector:
+    app: mysql
+  clusterIP: None
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql-delpoyment
+spec:
+  selector:
+    matchLabels:
+      app: mysql
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+      - image: arm64v8/mysql:latest
+        name: mysql
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: root # Use Kubernetes secrets in production
+        - name: MYSQL_DATABASE
+          value: real-timechatapplicationdatabase
+        - name: MYSQL_USER
+          value: user
+        - name: MYSQL_PASSWORD
+          value: pass
+        ports:
+        - containerPort: 3306
+          name: mysql
+        volumeMounts:
+        - name: mysql-persistent-storage
+          mountPath: /var/lib/mysql
+      volumes:
+      - name: mysql-persistent-storage
+        persistentVolumeClaim:
+          claimName: mysql-pv-claim
