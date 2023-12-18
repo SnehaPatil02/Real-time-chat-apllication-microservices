@@ -16,14 +16,10 @@ spec:
         image: messaging-service:latest
         imagePullPolicy: Never
         env:
-        - name: DATABASE_HOST
-          value: mysql_service
-        - name: DATABASE_PORT
-          value: "3306"
+        - name: DATABASE_URL
+          value: jdbc:mysql://mysql_service:3306/real-timechatapplicationdatabase
         - name: MYSQL_ROOT_PASSWORD
           value: root # Use Kubernetes secrets in production
-        - name: MYSQL_DATABASE
-          value: real-timechatapplicationdatabase
         - name: MYSQL_USER
           value: user
         - name: MYSQL_PASSWORD
@@ -51,6 +47,15 @@ spec:
       - name: user-management-service
         image: user-management-service:latest
         imagePullPolicy: Never
+        env:
+        - name: DATABASE_URL
+          value: jdbc:mysql://mysql-service:3306/real-timechatapplicationdatabase
+        - name: MYSQL_ROOT_PASSWORD
+          value: root # Use Kubernetes secrets in production
+        - name: MYSQL_USER
+          value: user
+        - name: MYSQL_PASSWORD
+          value: pass
         ports:
         - containerPort: 8080
 ---
