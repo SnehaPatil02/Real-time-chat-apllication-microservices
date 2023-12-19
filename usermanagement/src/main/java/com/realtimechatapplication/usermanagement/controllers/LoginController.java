@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.realtimechatapplication.usermanagement.bean.User;
+import com.realtimechatapplication.datapackage.bean.User;
 import com.realtimechatapplication.usermanagement.service.RegisterService;
 
 @RestController

@@ -3,8 +3,8 @@ package com.realtimechatapplication.usermanagement.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.realtimechatapplication.usermanagement.bean.User;
-import com.realtimechatapplication.usermanagement.repository.UserRepository;
+import com.realtimechatapplication.datapackage.bean.User;
+import com.realtimechatapplication.datapackage.repository.UserRepository;
 
 @Service
 public class RegisterServiceImpl implements RegisterService{
