@@ -4,6 +4,8 @@ FROM maven:3.8.5-openjdk-17  as build
 # Set the working directory in the Docker image
 WORKDIR /app
 
+COPY datapackage-1.0-SNAPSHOT.jar app.jar
+
 # Copy the pom.xml and source code
 COPY pom.xml .
 COPY src ./src

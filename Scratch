@@ -1,0 +1,16 @@
+sh run.sh 
+
+minikube image load messaging-service:latest
+minikube image load user-management-service:latest
+
+
+kubectl apply -f real-timechatapplication-kubefile.yaml
+
+#To build connection between the kubernetes and mysql workbench
+kubectl port-forward svc/mysql-service 3306:3306 
+
+#To get url in the terminal
+minikube service messagingservice-service
+
+#To image remove from the docker
+minikube image rm docker.io/library/messaging-service:latest
